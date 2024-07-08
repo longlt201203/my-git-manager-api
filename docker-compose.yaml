@@ -11,6 +11,47 @@ services:
       - 3306:3306
     volumes:
       - mgm-db-local-vol:/var/lib/mysql
+    networks:
+      - mgm-local-net
+
+  api:
+    container_name: mgm-api-local
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    env_file: .env
+    ports:
+      - 3000:3000
+    volumes:
+      - ./local-data:/app/local-data
+    networks:
+      - mgm-local-net
+    depends_on:
+      - db
+    develop:
+      watch:
+        - path: ./src
+          action: sync
+          target: /app/src
+        - path: ./.env
+          action: rebuild
+        - path: ./package.json
+          action: rebuild
+        - path: ./tsconfig.json
+          action: rebuild
+        - path: ./tsconfig.build.json
+          action: rebuild
+        - path: ./Dockerfile.dev
+          action: rebuild
+        - path: ./.dockerignore
+          action: rebuild
+        - path: ./docker-compose.yaml
+          action: rebuild
+
+networks:
+  mgm-local-net:
+    name: mgm-local-net
+    driver: bridge
 
 volumes:
   mgm-db-local-vol:
