@@ -23,7 +23,8 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - ./local-data:/app/local-data
+      - ./local-data/app-data:/app/app-data
+      - ./local-data/.ssh:/root/.ssh
     networks:
       - mgm-local-net
     depends_on:

@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { ShellService } from "@providers/shell/shell.service";
+import { ShellService } from "./shell.service";
 
 @Module({
 	providers: [ShellService],

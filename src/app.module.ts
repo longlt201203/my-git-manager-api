@@ -1,12 +1,12 @@
-import { Module, OnModuleInit } from "@nestjs/common";
+import { Module } from "@nestjs/common";
 import { APP_FILTER, APP_PIPE } from "@nestjs/core";
 import { MyExceptionFilter, ValidationPipe } from "@utils";
 import { DbModule } from "@db";
 import { CredentialsModule } from "@modules/credentials";
-import * as fs from "fs";
+import { SettingsModule } from "@modules/settings";
 
 @Module({
-	imports: [DbModule, CredentialsModule],
+	imports: [DbModule, CredentialsModule, SettingsModule],
 	controllers: [],
 	providers: [
 		{
@@ -19,9 +19,4 @@ import * as fs from "fs";
 		},
 	],
 })
-export class AppModule implements OnModuleInit {
-	onModuleInit() {
-		const localDataDir = "local-data";
-		if (!fs.existsSync(localDataDir)) fs.mkdirSync(localDataDir);
-	}
-}
+export class AppModule {}
