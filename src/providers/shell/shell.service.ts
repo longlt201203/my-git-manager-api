@@ -15,7 +15,7 @@ export class ShellService {
 		});
 	}
 
-	sshKeyGen() {
+	generateAndOverrideSshKeyPair() {
 		return this.executeShell(
 			"rm -f ~/.ssh/id_rsa &&",
 			"rm -f ~/.ssh/id_rsa.pub &&",

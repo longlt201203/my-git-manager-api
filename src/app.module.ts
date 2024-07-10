@@ -4,9 +4,10 @@ import { MyExceptionFilter, ValidationPipe } from "@utils";
 import { DbModule } from "@db";
 import { CredentialsModule } from "@modules/credentials";
 import { SettingsModule } from "@modules/settings";
+import { ProjectsModule } from "@modules/projects";
 
 @Module({
-	imports: [DbModule, CredentialsModule, SettingsModule],
+	imports: [DbModule, CredentialsModule, SettingsModule, ProjectsModule],
 	controllers: [],
 	providers: [
 		{

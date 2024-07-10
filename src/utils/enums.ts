@@ -1,1 +1,3 @@
-export enum GitProviderEnum {}
+export enum GitProviderEnum {
+	GITHUB = "github",
+}

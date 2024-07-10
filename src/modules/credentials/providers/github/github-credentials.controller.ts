@@ -9,7 +9,7 @@ import {
 import { ApiResponseDto } from "@utils";
 
 @Controller("credentials/github")
-@ApiTags("Github Credentials")
+@ApiTags("Github", "Credentials")
 export class GithubCredentialsController {
 	constructor(
 		private readonly githubCredentialsService: GithubCredentialsService,

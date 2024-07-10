@@ -8,6 +8,7 @@ import { GithubCredentialEntity } from "@db/entities";
 @Module({
 	controllers: [GithubCredentialsController],
 	providers: [GithubCredentialsService],
+	exports: [GithubCredentialsService],
 	imports: [TypeOrmModule.forFeature([GithubCredentialEntity]), GithubModule],
 })
 export class GithubCredentialModule {}

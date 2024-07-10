@@ -1,22 +1,46 @@
 import { Injectable } from "@nestjs/common";
 import { ShellService } from "@providers/shell";
+import * as fs from "fs";
+import { SettingsDto, SshKeyPairDto } from "./dto";
+import { GetSshKeyPairFailedError } from "./errors";
 
 @Injectable()
 export class SettingsService {
 	constructor(private readonly shellService: ShellService) {}
 
-	getSettings() {}
+	async getSettings(): Promise<SettingsDto> {
+		const sshKeyPair = this.getSshKeyPair();
 
-	getSshKeyPair() {}
+		return {
+			sshKeyPair: sshKeyPair,
+		};
+	}
 
-	generateSshKeyPair() {}
-
-	async test() {
-		try {
-			await this.shellService.sshKeyGen();
-		} catch (err) {
-			console.log(err);
+	getSshKeyPair(): SshKeyPairDto {
+		let data: SshKeyPairDto = undefined;
+		const publicKeyFilePath = "/root/.ssh/id_rsa.pub";
+		const privateKeyFilePath = "/root/.ssh/id_rsa";
+		console.log(
+			fs.existsSync(publicKeyFilePath),
+			fs.existsSync(privateKeyFilePath),
+		);
+		if (fs.existsSync(publicKeyFilePath) && fs.existsSync(privateKeyFilePath)) {
+			const publicKey = fs.readFileSync(publicKeyFilePath).toString();
+			const privateKey = "*******************";
+			data = {
+				publicKey,
+				privateKey,
+			};
 		}
-		return "OK";
+		return data;
+	}
+
+	async generateSshKeyPair() {
+		try {
+			await this.shellService.generateAndOverrideSshKeyPair();
+			return this.getSshKeyPair();
+		} catch (err) {
+			throw new GetSshKeyPairFailedError(err);
+		}
 	}
 }

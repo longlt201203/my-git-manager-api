@@ -35,7 +35,10 @@ export class GithubService {
 				})
 				.pipe(
 					catchError((err: AxiosError) => {
-						throw new GetUserInfoError(err.response.data, err.status);
+						throw new GetUserInfoError(
+							err.response ? err.response.data : err.message,
+							err.status,
+						);
 					}),
 				),
 		);
@@ -52,7 +55,10 @@ export class GithubService {
 				})
 				.pipe(
 					catchError((err: AxiosError) => {
-						throw new GetUserReposError(err.response.data, err.status);
+						throw new GetUserReposError(
+							err.response ? err.response.data : err.message,
+							err.status,
+						);
 					}),
 				),
 		);
@@ -77,7 +83,10 @@ export class GithubService {
 				)
 				.pipe(
 					catchError((err: AxiosError) => {
-						throw new GetRepoContentsError(err.response.data, err.status);
+						throw new GetRepoContentsError(
+							err.response ? err.response.data : err.message,
+							err.status,
+						);
 					}),
 				),
 		);
