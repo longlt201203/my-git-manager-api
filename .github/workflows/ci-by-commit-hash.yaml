@@ -1,17 +1,13 @@
-# This is a Github Actions CI template file
-name: Workflow Name
+name: My Git Manager API CI
 on:
   # push:
   #   branches:
   #     - main
 
   workflow_dispatch:
-  #   inputs:
-  #     variable:
-  #       description: Variable description
-  #       type: string
+
 env:
-  REPO_ID: repo-id
+  REPO_ID: my-git-manager-api
   # GitOps API
   API_URI: https://api.github.com/repos/longlt201203/my-gitops/actions/workflows/105840951/dispatches
 jobs:

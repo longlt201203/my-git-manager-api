@@ -1,6 +1,6 @@
-import { GithubCredentialEntity } from "@db/entities";
+import { CredentialEntity } from "@db/entities";
 
-export class GithubCredentialResponse {
+export class GitCredentialResponse {
 	id: number;
 	username: string;
 	avatar: string;
@@ -8,7 +8,7 @@ export class GithubCredentialResponse {
 	createdAt: Date;
 	updatedAt: Date;
 
-	static fromEntity(entity: GithubCredentialEntity): GithubCredentialResponse {
+	static fromEntity(entity: CredentialEntity): GitCredentialResponse {
 		return {
 			id: entity.id,
 			username: entity.username,
@@ -19,7 +19,7 @@ export class GithubCredentialResponse {
 		};
 	}
 
-	static fromEntities(entities: GithubCredentialEntity[]) {
+	static fromEntities(entities: CredentialEntity[]) {
 		return entities.map(this.fromEntity);
 	}
 }

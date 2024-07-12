@@ -1,2 +1,2 @@
-export * from "./github-credential.entity";
 export * from "./project.entity";
+export * from "./credential.entity";

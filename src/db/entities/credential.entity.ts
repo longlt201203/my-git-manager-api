@@ -1,3 +1,4 @@
+import { GitProviderEnum } from "@utils";
 import {
 	Column,
 	CreateDateColumn,
@@ -7,12 +8,9 @@ import {
 } from "typeorm";
 
 @Entity()
-export class GithubCredentialEntity {
+export class CredentialEntity {
 	@PrimaryGeneratedColumn()
 	id: number;
-
-	@Column({ unique: true })
-	pat: string;
 
 	@Column()
 	username: string;
@@ -22,6 +20,12 @@ export class GithubCredentialEntity {
 
 	@Column()
 	name: string;
+
+	@Column({ type: "enum", enum: GitProviderEnum })
+	provider: string;
+
+	@Column({ type: "text" })
+	authInfo: string;
 
 	@CreateDateColumn()
 	createdAt: Date;

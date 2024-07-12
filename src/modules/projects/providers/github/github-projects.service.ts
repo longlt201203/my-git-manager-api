@@ -13,7 +13,7 @@ export class GithubProjectsService {
 	async listUserRepos(credentialId: number): Promise<GitRepoDto[]> {
 		const credential =
 			await this.githubCredentialsService.getByIdOrFail(credentialId);
-		const repos = await this.githubService.getUserRepos(credential.pat);
+		const repos = await this.githubService.getUserRepos(credential.authInfo);
 		return repos.map((item) => ({
 			name: item.name,
 			url: item.ssh_url,

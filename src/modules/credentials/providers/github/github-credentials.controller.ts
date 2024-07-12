@@ -1,11 +1,7 @@
 import { Body, Controller, Get, Param, Post } from "@nestjs/common";
 import { GithubCredentialsService } from "./github-credentials.service";
 import { ApiTags } from "@nestjs/swagger";
-import {
-	DeleteGithubCredentialRequest,
-	GithubAuthorizeRequest,
-	GithubCredentialResponse,
-} from "./dto";
+import { GithubAuthorizeRequest } from "./dto";
 import { ApiResponseDto } from "@utils";
 
 @Controller("credentials/github")
@@ -21,12 +17,6 @@ export class GithubCredentialsController {
 		return new ApiResponseDto(data);
 	}
 
-	@Get()
-	async getCredentials() {
-		const data = await this.githubCredentialsService.getAll();
-		return new ApiResponseDto(GithubCredentialResponse.fromEntities(data));
-	}
-
 	@Post("authorize")
 	async authorize(@Body() dto: GithubAuthorizeRequest) {
 		await this.githubCredentialsService.authorize(dto);
@@ -39,12 +29,6 @@ export class GithubCredentialsController {
 		@Body() dto: GithubAuthorizeRequest,
 	) {
 		await this.githubCredentialsService.reAuthorize(+id, dto);
-		return new ApiResponseDto(null, null, "Success");
-	}
-
-	@Post("delete")
-	async delete(@Body() dto: DeleteGithubCredentialRequest) {
-		await this.githubCredentialsService.remove(dto);
 		return new ApiResponseDto(null, null, "Success");
 	}
 }
