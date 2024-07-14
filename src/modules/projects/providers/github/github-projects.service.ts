@@ -1,7 +1,7 @@
 import { GithubCredentialsService } from "@modules/credentials/providers/github";
 import { Injectable } from "@nestjs/common";
 import { GithubService } from "@providers/github";
-import { GitRepoDto } from "../../dto";
+import { GitRepoDto } from "../../dto/requests";
 
 @Injectable()
 export class GithubProjectsService {

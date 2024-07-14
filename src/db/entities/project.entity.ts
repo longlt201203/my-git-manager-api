@@ -1,11 +1,12 @@
-import { GitProviderEnum } from "@utils";
 import {
 	Column,
 	CreateDateColumn,
 	Entity,
+	OneToMany,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from "typeorm";
+import { ProjectRepositoryEntity } from "./project-repository.entity";
 
 @Entity()
 export class Project {
@@ -18,21 +19,12 @@ export class Project {
 	@Column()
 	description: string;
 
-	@Column()
-	gitName: string;
-
-	@Column()
-	url: string;
-
-	@Column()
-	credentialId: number;
-
-	@Column({ type: "enum", enum: GitProviderEnum })
-	provider: string;
-
 	@CreateDateColumn()
 	createdAt: Date;
 
 	@UpdateDateColumn()
 	updatedAt: Date;
+
+	@OneToMany(() => ProjectRepositoryEntity, (repository) => repository.project)
+	childrenRepos: ProjectRepositoryEntity[];
 }
