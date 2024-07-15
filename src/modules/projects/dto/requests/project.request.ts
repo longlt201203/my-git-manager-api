@@ -1,15 +1,13 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { GitProviderEnum } from "@utils";
 import {
-	IsEnum,
 	IsNotEmpty,
-	IsNumber,
 	IsOptional,
 	IsString,
 	ValidateNested,
 } from "class-validator";
 import { ProjectRepositoryRequest } from "./project-repository.request";
 import { Type } from "class-transformer";
+import { MainProjectRepositoryRequest } from "./main-project-repository.request";
 
 export class ProjectRequest {
 	@ApiProperty()
@@ -22,11 +20,11 @@ export class ProjectRequest {
 	@IsNotEmpty()
 	description: string;
 
-	@ApiProperty({ type: ProjectRepositoryRequest, required: false })
+	@ApiProperty({ type: MainProjectRepositoryRequest, required: false })
 	@IsOptional()
 	@ValidateNested()
-	@Type(() => ProjectRepositoryRequest)
-	mainRepo?: ProjectRepositoryRequest;
+	@Type(() => MainProjectRepositoryRequest)
+	mainRepo?: MainProjectRepositoryRequest;
 
 	@ApiProperty({ type: ProjectRepositoryRequest, isArray: true })
 	@ValidateNested({ each: true })

@@ -35,7 +35,7 @@ export class ProjectsService {
 		if (dto.mainRepo) {
 			const mainRepo = this.projectRepositoryEntityRepository.create({
 				name: dto.mainRepo.name,
-				url: dto.mainRepo.url,
+				url: "testURL",
 				type: ProjectRepositoryTypeEnum.MAIN,
 				credential: { id: dto.mainRepo.credentialId },
 				project: entity,
