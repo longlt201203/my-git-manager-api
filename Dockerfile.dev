@@ -1,4 +1,6 @@
 FROM node:20
+RUN ssh-keyscan github.com > githubKey
+RUN ssh-keygen -lf githubKey
 WORKDIR /app
 COPY package.json yarn.lock ./
 RUN yarn

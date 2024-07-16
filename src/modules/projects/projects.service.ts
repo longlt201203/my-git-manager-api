@@ -6,6 +6,7 @@ import { ProjectRequest, ProjectQuery, DeleteProjectDto } from "./dto/requests";
 import { ProjectRepositoryTypeEnum } from "@utils";
 import { Transactional } from "typeorm-transactional";
 import { ProjectNotFoundError } from "./errors";
+import { ShellService } from "@providers/shell";
 
 @Injectable()
 export class ProjectsService {
@@ -14,6 +15,7 @@ export class ProjectsService {
 		private readonly projectRepository: Repository<Project>,
 		@InjectRepository(ProjectRepositoryEntity)
 		private readonly projectRepositoryEntityRepository: Repository<ProjectRepositoryEntity>,
+		private readonly shellService: ShellService,
 	) {}
 
 	@Transactional()
@@ -23,7 +25,7 @@ export class ProjectsService {
 			description: dto.description,
 		});
 		entity = await this.projectRepository.save(entity);
-		const projectRepositories = dto.childrenRepos.map((item) =>
+		let projectRepositories = dto.childrenRepos.map((item) =>
 			this.projectRepositoryEntityRepository.create({
 				name: item.name,
 				url: item.url,
@@ -42,7 +44,13 @@ export class ProjectsService {
 			});
 			projectRepositories.push(mainRepo);
 		}
-		await this.projectRepositoryEntityRepository.save(projectRepositories);
+		projectRepositories =
+			await this.projectRepositoryEntityRepository.save(projectRepositories);
+		await Promise.all(
+			projectRepositories.map((v) =>
+				this.shellService.gitClone(v.url, `project-${entity.id}-${v.id}`),
+			),
+		);
 	}
 
 	@Transactional()

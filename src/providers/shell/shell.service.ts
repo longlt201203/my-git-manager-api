@@ -26,4 +26,11 @@ export class ShellService {
 	echo(text: string) {
 		return this.executeShell("echo", text);
 	}
+
+	gitClone(repositoryUrl: string, alias?: string) {
+		return this.executeShell(
+			"cd /app/app-data/projects &&",
+			`git clone ${repositoryUrl}${alias ? ` ${alias}` : ""}`,
+		);
+	}
 }

@@ -1,16 +1,25 @@
-import { Module } from "@nestjs/common";
+import { Module, OnModuleInit } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ProjectsService } from "./projects.service";
 import { ProjectsController } from "./projects.controller";
 import { GithubProjectsModule } from "./providers/github";
 import { Project, ProjectRepositoryEntity } from "@db/entities";
+import { resolve } from "path";
+import * as fs from "fs";
+import { ShellModule } from "@providers/shell";
 
 @Module({
 	imports: [
 		TypeOrmModule.forFeature([Project, ProjectRepositoryEntity]),
 		GithubProjectsModule,
+		ShellModule,
 	],
 	providers: [ProjectsService],
 	controllers: [ProjectsController],
 })
-export class ProjectsModule {}
+export class ProjectsModule implements OnModuleInit {
+	onModuleInit() {
+		const projectsFolder = resolve("app-data", "projects");
+		if (!fs.existsSync(projectsFolder)) fs.mkdirSync(projectsFolder);
+	}
+}
