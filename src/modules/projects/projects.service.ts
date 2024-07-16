@@ -7,6 +7,8 @@ import { ProjectRepositoryTypeEnum } from "@utils";
 import { Transactional } from "typeorm-transactional";
 import { ProjectNotFoundError } from "./errors";
 import { ShellService } from "@providers/shell";
+// import { v4 } from "uuid";
+// import { resolve } from "path";
 
 @Injectable()
 export class ProjectsService {
@@ -25,25 +27,27 @@ export class ProjectsService {
 			description: dto.description,
 		});
 		entity = await this.projectRepository.save(entity);
-		let projectRepositories = dto.childrenRepos.map((item) =>
-			this.projectRepositoryEntityRepository.create({
+		let projectRepositories = dto.childrenRepos.map((item) => {
+			// const localName = `project-${entity.id}-${v4()}`;
+			// const localPath = resolve(__dirname, )
+			return this.projectRepositoryEntityRepository.create({
 				name: item.name,
 				url: item.url,
 				type: ProjectRepositoryTypeEnum.CHILD,
 				credential: { id: item.credentialId },
 				project: entity,
-			}),
-		);
-		if (dto.mainRepo) {
-			const mainRepo = this.projectRepositoryEntityRepository.create({
-				name: dto.mainRepo.name,
-				url: "testURL",
-				type: ProjectRepositoryTypeEnum.MAIN,
-				credential: { id: dto.mainRepo.credentialId },
-				project: entity,
 			});
-			projectRepositories.push(mainRepo);
-		}
+		});
+		// if (dto.mainRepo) {
+		// 	const mainRepo = this.projectRepositoryEntityRepository.create({
+		// 		name: dto.mainRepo.name,
+		// 		url: "testURL",
+		// 		type: ProjectRepositoryTypeEnum.MAIN,
+		// 		credential: { id: dto.mainRepo.credentialId },
+		// 		project: entity,
+		// 	});
+		// 	projectRepositories.push(mainRepo);
+		// }
 		projectRepositories =
 			await this.projectRepositoryEntityRepository.save(projectRepositories);
 		await Promise.all(

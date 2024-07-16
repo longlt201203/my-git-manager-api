@@ -26,7 +26,7 @@ export class SettingsService {
 		);
 		if (fs.existsSync(publicKeyFilePath) && fs.existsSync(privateKeyFilePath)) {
 			const publicKey = fs.readFileSync(publicKeyFilePath).toString();
-			const privateKey = "*******************";
+			const privateKey = "*******************************";
 			data = {
 				publicKey,
 				privateKey,
