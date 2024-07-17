@@ -18,6 +18,7 @@ export class GithubProjectsService {
 			id: index + 1,
 			name: item.name,
 			url: item.ssh_url,
+			htmlUrl: item.html_url,
 		}));
 	}
 }

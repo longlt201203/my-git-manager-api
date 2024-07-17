@@ -19,6 +19,12 @@ export class Project {
 	@Column()
 	description: string;
 
+	@Column()
+	localName: string;
+
+	@Column({ type: "text" })
+	localPath: string;
+
 	@CreateDateColumn()
 	createdAt: Date;
 

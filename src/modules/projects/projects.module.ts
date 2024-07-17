@@ -7,12 +7,14 @@ import { Project, ProjectRepositoryEntity } from "@db/entities";
 import { resolve } from "path";
 import * as fs from "fs";
 import { ShellModule } from "@providers/shell";
+import { SettingsModule } from "@modules/settings";
 
 @Module({
 	imports: [
 		TypeOrmModule.forFeature([Project, ProjectRepositoryEntity]),
 		GithubProjectsModule,
 		ShellModule,
+		SettingsModule,
 	],
 	providers: [ProjectsService],
 	controllers: [ProjectsController],

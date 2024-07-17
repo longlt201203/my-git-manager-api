@@ -4,6 +4,7 @@ export class ProjectInfoResponse {
 	id: number;
 	name: string;
 	description: string;
+	localPath: string;
 	createdAt: Date;
 	updatedAt: Date;
 
@@ -12,6 +13,7 @@ export class ProjectInfoResponse {
 			id: entity.id,
 			name: entity.name,
 			description: entity.description,
+			localPath: entity.localPath,
 			createdAt: entity.createdAt,
 			updatedAt: entity.updatedAt,
 		};

@@ -5,9 +5,16 @@ import { DbModule } from "@db";
 import { CredentialsModule } from "@modules/credentials";
 import { SettingsModule } from "@modules/settings";
 import { ProjectsModule } from "@modules/projects";
+import { ProjectRepositoryModule } from "@modules/project-repository";
 
 @Module({
-	imports: [DbModule, CredentialsModule, SettingsModule, ProjectsModule],
+	imports: [
+		DbModule,
+		CredentialsModule,
+		SettingsModule,
+		ProjectsModule,
+		ProjectRepositoryModule,
+	],
 	controllers: [],
 	providers: [
 		{

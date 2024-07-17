@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import {
-	IsBoolean,
+	ArrayMinSize,
 	IsNotEmpty,
 	IsOptional,
 	IsString,
@@ -28,6 +28,7 @@ export class ProjectRequest {
 	mainRepo?: MainProjectRepositoryRequest;
 
 	@ApiProperty({ type: ProjectRepositoryRequest, isArray: true })
+	@ArrayMinSize(1)
 	@ValidateNested({ each: true })
 	@Type(() => ProjectRepositoryRequest)
 	childrenRepos: ProjectRepositoryRequest[];

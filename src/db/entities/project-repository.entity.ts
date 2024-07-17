@@ -20,8 +20,11 @@ export class ProjectRepositoryEntity {
 	@Column()
 	name: string;
 
-	@Column()
+	@Column({ type: "text" })
 	localPath: string;
+
+	@Column({ type: "text", nullable: true })
+	htmlUrl: string;
 
 	@ManyToOne(() => CredentialEntity, { eager: true })
 	@JoinColumn()

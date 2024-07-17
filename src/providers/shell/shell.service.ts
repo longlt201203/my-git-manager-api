@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { exec } from "child_process";
+import * as fs from "fs";
 
 @Injectable()
 export class ShellService {
@@ -27,9 +28,11 @@ export class ShellService {
 		return this.executeShell("echo", text);
 	}
 
-	gitClone(repositoryUrl: string, alias?: string) {
+	gitClone(repositoryUrl: string, projectFolderName: string, alias?: string) {
+		const cdFolder = `/app/app-data/projects/${projectFolderName}`;
+		if (!fs.existsSync(cdFolder)) fs.mkdirSync(cdFolder);
 		return this.executeShell(
-			"cd /app/app-data/projects &&",
+			`cd ${cdFolder} &&`,
 			`git clone ${repositoryUrl}${alias ? ` ${alias}` : ""}`,
 		);
 	}

@@ -1,5 +1,6 @@
+import { SettingsDto } from "./dto";
 import { SettingsService } from "./settings.service";
-import { Controller, Get } from "@nestjs/common";
+import { Body, Controller, Get, Put } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { ApiResponseDto } from "@utils";
 
@@ -15,8 +16,14 @@ export class SettingsController {
 	}
 
 	@Get()
-	async getSettings() {
-		const data = await this.settingsService.getSettings();
+	getSettings() {
+		const data = this.settingsService.getSettings();
 		return new ApiResponseDto(data);
+	}
+
+	@Put()
+	updateSettings(@Body() dto: SettingsDto) {
+		this.settingsService.updateSettings(dto);
+		return new ApiResponseDto(null, null, "Update settings successfully!");
 	}
 }

@@ -1,14 +1,22 @@
 import { Project, ProjectRepositoryEntity } from "@db/entities";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { ProjectRequest, ProjectQuery, DeleteProjectDto } from "./dto/requests";
+import { Not, Repository } from "typeorm";
+import {
+	ProjectRequest,
+	ProjectQuery,
+	DeleteProjectDto,
+	CheckProjectNameRequest,
+	ProjectRepositoryRequest,
+} from "./dto/requests";
 import { ProjectRepositoryTypeEnum } from "@utils";
 import { Transactional } from "typeorm-transactional";
 import { ProjectNotFoundError } from "./errors";
 import { ShellService } from "@providers/shell";
-// import { v4 } from "uuid";
-// import { resolve } from "path";
+import { join } from "path";
+import { SettingsService } from "@modules/settings";
+import { ValidationError } from "class-validator";
+import { ApiValidationError } from "@errors";
 
 @Injectable()
 export class ProjectsService {
@@ -18,24 +26,39 @@ export class ProjectsService {
 		@InjectRepository(ProjectRepositoryEntity)
 		private readonly projectRepositoryEntityRepository: Repository<ProjectRepositoryEntity>,
 		private readonly shellService: ShellService,
+		private readonly settingsService: SettingsService,
 	) {}
 
 	@Transactional()
 	async create(dto: ProjectRequest) {
+		await this.validate(dto);
+
+		const settings = this.settingsService.getSettings();
+		const projectLocalName = dto.name.toLowerCase().replaceAll(" ", "-");
+		const projectLocalPath = join(
+			settings.localDataFolder,
+			"app-data",
+			"projects",
+			projectLocalName,
+		);
 		let entity = this.projectRepository.create({
 			name: dto.name,
 			description: dto.description,
+			localPath: projectLocalPath,
+			localName: projectLocalName,
 		});
 		entity = await this.projectRepository.save(entity);
 		let projectRepositories = dto.childrenRepos.map((item) => {
-			// const localName = `project-${entity.id}-${v4()}`;
-			// const localPath = resolve(__dirname, )
+			const localName = item.name.toLowerCase().replaceAll(" ", "-");
+			const localPath = join(projectLocalPath, localName);
 			return this.projectRepositoryEntityRepository.create({
 				name: item.name,
 				url: item.url,
+				htmlUrl: item.htmlUrl || undefined,
 				type: ProjectRepositoryTypeEnum.CHILD,
 				credential: { id: item.credentialId },
 				project: entity,
+				localPath: localPath,
 			});
 		});
 		// if (dto.mainRepo) {
@@ -51,9 +74,14 @@ export class ProjectsService {
 		projectRepositories =
 			await this.projectRepositoryEntityRepository.save(projectRepositories);
 		await Promise.all(
-			projectRepositories.map((v) =>
-				this.shellService.gitClone(v.url, `project-${entity.id}-${v.id}`),
-			),
+			projectRepositories.map((v) => {
+				const parts = v.localPath.split("/");
+				return this.shellService.gitClone(
+					v.url,
+					projectLocalName,
+					parts[parts.length - 1],
+				);
+			}),
 		);
 	}
 
@@ -84,5 +112,56 @@ export class ProjectsService {
 	@Transactional()
 	async delete(dto: DeleteProjectDto) {
 		return this.projectRepository.delete(dto.ids);
+	}
+
+	@Transactional()
+	async checkProjectName(dto: CheckProjectNameRequest) {
+		return this.isProjectNameExisted(dto.name, dto.id);
+	}
+
+	private async validate(dto: ProjectRequest, id?: number) {
+		const errors: ValidationError[] = [];
+		const result = await Promise.all([
+			this.isProjectNameExisted(dto.name, id),
+			this.isDuplicatedProjectRepository(dto.childrenRepos),
+		]);
+
+		if (result[0]) {
+			const error = new ValidationError();
+			error.property = "name";
+			error.constraints = { isUnique: "Project name is already existed!" };
+			errors.push(error);
+		}
+
+		if (result[1]) {
+			const error = new ValidationError();
+			error.property = "childrenRepos";
+			error.constraints = { isNotDuplicated: "Duplicated repository!" };
+			errors.push(error);
+		}
+
+		if (errors.length > 0) {
+			throw new ApiValidationError(errors);
+		}
+	}
+
+	private async isProjectNameExisted(name: string, id?: number) {
+		return this.projectRepository.exists({
+			where: {
+				localName: name.toLowerCase().replaceAll(" ", "-"),
+				id: id && Not(id),
+			},
+		});
+	}
+
+	private isDuplicatedProjectRepository(
+		childrenRepos: ProjectRepositoryRequest[],
+	) {
+		for (let i = 0; i < childrenRepos.length - 1; i++) {
+			for (let j = i + 1; j < childrenRepos.length; j++) {
+				if (childrenRepos[i].name == childrenRepos[j].name) return true;
+			}
+		}
+		return false;
 	}
 }

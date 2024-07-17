@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class ProjectRepositoryRequest {
 	@ApiProperty()
@@ -11,6 +11,11 @@ export class ProjectRepositoryRequest {
 	@IsString()
 	@IsNotEmpty()
 	url: string;
+
+	@ApiProperty()
+	@IsString()
+	@IsOptional()
+	htmlUrl?: string;
 
 	@ApiProperty()
 	@IsNumber()

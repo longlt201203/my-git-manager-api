@@ -7,6 +7,8 @@ export class ProjectRepositoryResponse {
 	url: string;
 	credential: GitCredentialResponse;
 	type: string;
+	localPath: string;
+	htmlUrl?: string;
 
 	static fromEntity(
 		entity: ProjectRepositoryEntity,
@@ -17,6 +19,8 @@ export class ProjectRepositoryResponse {
 			url: entity.url,
 			credential: GitCredentialResponse.fromEntity(entity.credential),
 			type: entity.type,
+			localPath: entity.localPath,
+			htmlUrl: entity.htmlUrl,
 		};
 	}
 

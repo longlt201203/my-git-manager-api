@@ -1,7 +1,12 @@
 import { Body, Controller, Get, Param, Post, Query } from "@nestjs/common";
 import { ProjectsService } from "./projects.service";
 import { ApiTags } from "@nestjs/swagger";
-import { DeleteProjectDto, ProjectQuery, ProjectRequest } from "./dto/requests";
+import {
+	CheckProjectNameRequest,
+	DeleteProjectDto,
+	ProjectQuery,
+	ProjectRequest,
+} from "./dto/requests";
 import { ApiResponseDto } from "@utils";
 import { ProjectInfoResponse, ProjectResponse } from "./dto/response";
 
@@ -9,6 +14,12 @@ import { ProjectInfoResponse, ProjectResponse } from "./dto/response";
 @ApiTags("Projects")
 export class ProjectsController {
 	constructor(private readonly projectsService: ProjectsService) {}
+
+	@Post("check-project-name")
+	async checkProjectName(@Body() dto: CheckProjectNameRequest) {
+		const data = await this.projectsService.checkProjectName(dto);
+		return new ApiResponseDto(data);
+	}
 
 	@Post("delete")
 	async delete(@Body() dto: DeleteProjectDto) {

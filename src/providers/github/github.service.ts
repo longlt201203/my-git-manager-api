@@ -16,7 +16,7 @@ import {
 @Injectable()
 export class GithubService {
 	private readonly API_GET_USER_INFO = "/user";
-	private readonly API_GET_USER_REPOS = "/user/repos";
+	private readonly API_GET_USER_REPOS = `/user/repos`;
 	private readonly API_GET_REPOS_CONTENTS = (
 		owner: string,
 		repo: string,

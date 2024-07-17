@@ -3,17 +3,26 @@ import { ShellService } from "@providers/shell";
 import * as fs from "fs";
 import { SettingsDto, SshKeyPairDto } from "./dto";
 import { GetSshKeyPairFailedError } from "./errors";
+import { resolve } from "path";
 
 @Injectable()
 export class SettingsService {
 	constructor(private readonly shellService: ShellService) {}
 
-	async getSettings(): Promise<SettingsDto> {
+	getSettings(): SettingsDto {
 		const sshKeyPair = this.getSshKeyPair();
+		const settingsObj = this.readSettingsJSON();
 
 		return {
 			sshKeyPair: sshKeyPair,
+			localDataFolder: settingsObj.localDataFolder,
 		};
+	}
+
+	updateSettings(dto: SettingsDto) {
+		delete dto.sshKeyPair;
+		dto.localDataFolder = dto.localDataFolder.replaceAll("\\", "/");
+		this.updateSettingsJSON(dto);
 	}
 
 	getSshKeyPair(): SshKeyPairDto {
@@ -42,5 +51,16 @@ export class SettingsService {
 		} catch (err) {
 			throw new GetSshKeyPairFailedError(err);
 		}
+	}
+
+	private readSettingsJSON() {
+		const settingsJSONPath = resolve("app-data", "settings.json");
+		const strData = fs.readFileSync(settingsJSONPath).toString();
+		return JSON.parse(strData);
+	}
+
+	private updateSettingsJSON(settings: any) {
+		const settingsJSONPath = resolve("app-data", "settings.json");
+		fs.writeFileSync(settingsJSONPath, JSON.stringify(settings, null, 2));
 	}
 }
