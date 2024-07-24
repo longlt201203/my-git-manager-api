@@ -2,6 +2,8 @@ import { GithubCredentialsService } from "@modules/credentials/providers/github"
 import { Injectable } from "@nestjs/common";
 import { GithubService } from "@providers/github";
 import { GitRepoDto } from "../../dto/response";
+import { GithubProjectsQuery } from "./dto";
+import { GithubRepository } from "@providers/github/dto";
 
 @Injectable()
 export class GithubProjectsService {
@@ -10,10 +12,28 @@ export class GithubProjectsService {
 		private readonly githubCredentialsService: GithubCredentialsService,
 	) {}
 
-	async listUserRepos(credentialId: number): Promise<GitRepoDto[]> {
-		const credential =
-			await this.githubCredentialsService.getByIdOrFail(credentialId);
-		const repos = await this.githubService.getUserRepos(credential.authInfo);
+	async listUserRepos(query: GithubProjectsQuery): Promise<GitRepoDto[]> {
+		const credential = await this.githubCredentialsService.getByIdOrFail(
+			query.credentialId,
+		);
+		const repos: GithubRepository[] = [];
+
+		let stop = false;
+		let page = 1;
+
+		while (!stop) {
+			const tmp = await this.githubService.getUserRepos({
+				pat: credential.authInfo,
+				page: page,
+			});
+			if (tmp.length > 0) {
+				repos.push(...tmp);
+				page++;
+			} else {
+				stop = true;
+			}
+		}
+
 		return repos.map((item, index) => ({
 			id: index + 1,
 			name: item.name,
