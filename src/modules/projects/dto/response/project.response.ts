@@ -1,7 +1,7 @@
 import { Project } from "@db/entities";
 import { ProjectInfoResponse } from "./project-info.response";
-import { ProjectRepositoryResponse } from "./project-repository.response";
 import { ProjectRepositoryTypeEnum } from "@utils";
+import { ProjectRepositoryResponse } from "@modules/project-repository/dto";
 
 export class ProjectResponse extends ProjectInfoResponse {
 	mainRepo?: ProjectRepositoryResponse;

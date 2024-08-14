@@ -6,7 +6,12 @@ import * as fs from "fs";
 import { join, resolve } from "path";
 import { GitProviderEnum } from "@utils";
 import { GithubService } from "@providers/github";
-import { ProjectRepositoryAnalysis, ProjectRepositoryPipeLine } from "./dto";
+import {
+	ProjectRepositoryAnalysis,
+	ProjectRepositoryPipeLine,
+	ProjectRepositoryResponse,
+} from "./dto";
+import { ProjectRepositoryNotFoundError } from "./errors";
 
 @Injectable()
 export class ProjectRepositoryService {
@@ -17,9 +22,6 @@ export class ProjectRepositoryService {
 	) {}
 
 	async viewRepository(id: number) {
-		const result: ProjectRepositoryAnalysis = {
-			pipeLines: [],
-		};
 		const entity = await this.projectRepositoryEntityRepository.findOne({
 			where: { id: id },
 			relations: {
@@ -27,6 +29,11 @@ export class ProjectRepositoryService {
 				credential: true,
 			},
 		});
+		if (!entity) throw new ProjectRepositoryNotFoundError();
+		const result: ProjectRepositoryAnalysis = {
+			info: ProjectRepositoryResponse.fromEntity(entity),
+			pipeLines: [],
+		};
 		const rootPath = resolve(
 			"app-data",
 			"projects",
@@ -67,12 +74,16 @@ export class ProjectRepositoryService {
 		console.log(licenseFiles);
 	}
 
-	private async analyzeRepositoryPipeLines(provider: string, rootPath: string) {
+	private async analyzeRepositoryPipeLines(
+		provider: string,
+		rootPath: string,
+	): Promise<ProjectRepositoryPipeLine[]> {
 		switch (provider) {
 			case GitProviderEnum.GITHUB: {
 				return this.analyzeGithubRepositoryPipeLines(rootPath);
 			}
 		}
+		return [];
 	}
 
 	private async analyzeGithubRepositoryPipeLines(rootPath: string) {
